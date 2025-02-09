@@ -1,1 +1,0 @@
-select * from ME_Planning.OMT.DX_JZ_Users 
