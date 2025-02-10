@@ -1,0 +1,15 @@
+USE [ME_Planning]
+GO
+
+CREATE TABLE [OMT].[DX_JZ_Users]
+(
+    UserID INT PRIMARY KEY IDENTITY(1,1),
+    UserName NVARCHAR(100) NOT NULL,
+    Email NVARCHAR(100) NOT NULL UNIQUE,
+    PasswordHash NVARCHAR(255) NOT NULL,
+    PhoneNumber NVARCHAR(15),
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    UpdatedAt DATETIME DEFAULT GETDATE()
+) 
+GO
+
