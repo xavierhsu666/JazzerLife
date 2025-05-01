@@ -1,5 +1,5 @@
 -- 插入範例用戶資料
-INSERT INTO Mem.Users
+INSERT INTO MEM.Users
     (UserName, Email, PasswordHash, PhoneNumber)
 VALUES
     ('Alice', 'alice@example.com', 'hashed_password_1', '123-456-7890'),
