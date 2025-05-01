@@ -2,7 +2,10 @@
 body {
   padding-top: 3.5rem;
 }
-div.btnArea>a {
-  
+div.btnArea > a {
   margin: 3px;
+}
+
+a:hover {
+  cursor: pointer;
 }

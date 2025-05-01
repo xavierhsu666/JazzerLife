@@ -1,0 +1,5 @@
+﻿OrganizationName,AccountName,Code,Unit,MarketValue,Cost,UnReallizeBenefit,UnReallizeBenefitRatio,AccountStopTime
+MannualStock,TC,878,15000,330750,335236,-5098.75,-1.52,
+MannualStock,TC,919,24000,562080,583687,-22649.08,-3.88,
+MannualStock,TC,56,8000,296160,307466,-11855.16,-3.86,
+MannualStock,TC,929,30000,541800,564903,-24107.8,-4.27,
