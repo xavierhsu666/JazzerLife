@@ -13,6 +13,7 @@ public class WebService : System.Web.Services.WebService
 {
 
     [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public string meta_sql (string sql_code)
     {
         string sql = @""+sql_code;
@@ -34,7 +35,8 @@ public class WebService : System.Web.Services.WebService
     private DataTable ChangeDataToTable(string query)
     {
 
-        string constr = ConfigurationManager.ConnectionStrings["PROD06"].ConnectionString;
+        //string constr = ConfigurationManager.ConnectionStrings["PROD06"].ConnectionString;
+        string constr = ConfigurationManager.ConnectionStrings["KAZUO"].ConnectionString;
         using (SqlConnection con = new SqlConnection(constr))
         {
             using (SqlCommand cmd = new SqlCommand(query, con))
@@ -51,7 +53,8 @@ public class WebService : System.Web.Services.WebService
     }
     private string QuerySQL(string sql)
     {
-        string constr = ConfigurationManager.ConnectionStrings["PROD06"].ConnectionString;
+        //string constr = ConfigurationManager.ConnectionStrings["PROD06"].ConnectionString;
+        string constr = ConfigurationManager.ConnectionStrings["KAZUO"].ConnectionString;
 
         try
         {
@@ -73,7 +76,8 @@ public class WebService : System.Web.Services.WebService
 
     private string QuerySQL_long(string sql)
     {
-        string constr = ConfigurationManager.ConnectionStrings["PROD06"].ConnectionString;
+        //string constr = ConfigurationManager.ConnectionStrings["PROD06"].ConnectionString;
+        string constr = ConfigurationManager.ConnectionStrings["KAZUO"].ConnectionString;
 
         try
         {
@@ -95,7 +99,8 @@ public class WebService : System.Web.Services.WebService
 
     private string QuerySQL_long_TY(string sql)
     {
-        string constr = ConfigurationManager.ConnectionStrings["TYMSSPROD06"].ConnectionString;
+        //string constr = ConfigurationManager.ConnectionStrings["TYMSSPROD06"].ConnectionString;
+        string constr = ConfigurationManager.ConnectionStrings["KAZUO"].ConnectionString;
 
         try
         {

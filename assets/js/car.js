@@ -145,6 +145,7 @@ function swipeMainSection(ele) {
   var ActiveSection = String($(ele).children("text").html())
     .replaceAll(" ", "")
     .toUpperCase();
+  $("section").addClass("d-none")
   $("section").each(function (i, val) {
     if ($(val).prop("id").trim().toUpperCase() == ActiveSection) {
       $(val).removeClass("d-none");
@@ -276,26 +277,26 @@ function create_MaintainCycleTable() {
     var tr = document.createElement("tr");
     $(tr).html(
       "<td>" +
-        i.PartName +
-        "</td>" +
-        "<td>" +
-        i.TimeCycle +
-        "</td>" +
-        "<td>" +
-        i.MileageCycle +
-        "</td>" +
-        "<td>" +
-        "<input type='text' id='avgCost_" +
-        val +
-        "' class='input-group form-control' style='text-align: center;' readonly/>" +
-        "</td>" +
-        "<td>" +
-        "<input type='button' id='PartsItem_" +
-        i.CycleID +
-        "' class='btn btn-primary' style='text-align: center;' value='EDIT' id='PartsEditBtn_" +
-        i.CycleID +
-        "'onclick='edit_PartsItem(this)' />" +
-        "</td>"
+      i.PartName +
+      "</td>" +
+      "<td>" +
+      i.TimeCycle +
+      "</td>" +
+      "<td>" +
+      i.MileageCycle +
+      "</td>" +
+      "<td>" +
+      "<input type='text' id='avgCost_" +
+      val +
+      "' class='input-group form-control' style='text-align: center;' readonly/>" +
+      "</td>" +
+      "<td>" +
+      "<input type='button' id='PartsItem_" +
+      i.CycleID +
+      "' class='btn btn-primary' style='text-align: center;' value='EDIT' id='PartsEditBtn_" +
+      i.CycleID +
+      "'onclick='edit_PartsItem(this)' />" +
+      "</td>"
     );
     m_Table.append(tr);
   });
@@ -352,33 +353,33 @@ function create_VehiclesTable() {
     var tr = document.createElement("tr");
     $(tr).html(
       "<th scope='row'>" +
-        val +
-        "</th>" +
-        "<td id='vMake_" +
-        i.VehicleID +
-        "'>" +
-        i.Make +
-        "</td>" +
-        "<td id='vModel_" +
-        i.VehicleID +
-        "'>" +
-        i.Model +
-        "</td>" +
-        "<td id='vYear_" +
-        i.VehicleID +
-        "'>" +
-        i.Year +
-        "</td>" +
-        "<td id='vLicensePlate_" +
-        i.VehicleID +
-        "'>" +
-        i.LicensePlate +
-        "</td>" +
-        "<td>" +
-        "<button id='vid_" +
-        i.VehicleID +
-        "' class='btn btn-primary' onclick='edit_Vehicles(this)'>EDIT</button>" +
-        "</td>"
+      val +
+      "</th>" +
+      "<td id='vMake_" +
+      i.VehicleID +
+      "'>" +
+      i.Make +
+      "</td>" +
+      "<td id='vModel_" +
+      i.VehicleID +
+      "'>" +
+      i.Model +
+      "</td>" +
+      "<td id='vYear_" +
+      i.VehicleID +
+      "'>" +
+      i.Year +
+      "</td>" +
+      "<td id='vLicensePlate_" +
+      i.VehicleID +
+      "'>" +
+      i.LicensePlate +
+      "</td>" +
+      "<td>" +
+      "<button id='vid_" +
+      i.VehicleID +
+      "' class='btn btn-primary' onclick='edit_Vehicles(this)'>EDIT</button>" +
+      "</td>"
     );
     $("#vehiclesTable>tbody").append($(tr));
   });
@@ -576,36 +577,36 @@ function addRow_PartsTable() {
   var index = $("#parts_table").children("tbody").children("tr").length + 1;
   $(tr).html(
     "<td>" +
-      "<input type='text' id='parts_SortItem_" +
-      index +
-      "' value='' class='input-group form-control newPartsCycleItem newPartsCycleItem_" +
-      index +
-      "'style='text-align: center'/>" +
-      "</td>" +
-      "<td>" +
-      "<input type='text' id='parts_KM_" +
-      index +
-      "' value='' class='input-group form-control newPartsCycleItem newPartsCycleItem_" +
-      index +
-      "'style='text-align: center'/>" +
-      "</td>" +
-      "<td>" +
-      "<input type='text' id='parts_Day_" +
-      index +
-      "' value='' class='input-group form-control newPartsCycleItem newPartsCycleItem_" +
-      index +
-      "'style='text-align: center'/>" +
-      "</td>" +
-      "<td>" +
-      "<input type='text' id='parts_AvgCost_" +
-      index +
-      "' value='' class='input-group form-control 'style='text-align: center' readonly/>" +
-      "</td>" +
-      "<td>" +
-      "<input type='button' id='parts_Del_" +
-      index +
-      "' value='DEL' class='input-group form-control btn btn-danger 'style='text-align: center' onclick='del_newAddRow(this)'/>" +
-      "</td>"
+    "<input type='text' id='parts_SortItem_" +
+    index +
+    "' value='' class='input-group form-control newPartsCycleItem newPartsCycleItem_" +
+    index +
+    "'style='text-align: center'/>" +
+    "</td>" +
+    "<td>" +
+    "<input type='text' id='parts_KM_" +
+    index +
+    "' value='' class='input-group form-control newPartsCycleItem newPartsCycleItem_" +
+    index +
+    "'style='text-align: center'/>" +
+    "</td>" +
+    "<td>" +
+    "<input type='text' id='parts_Day_" +
+    index +
+    "' value='' class='input-group form-control newPartsCycleItem newPartsCycleItem_" +
+    index +
+    "'style='text-align: center'/>" +
+    "</td>" +
+    "<td>" +
+    "<input type='text' id='parts_AvgCost_" +
+    index +
+    "' value='' class='input-group form-control 'style='text-align: center' readonly/>" +
+    "</td>" +
+    "<td>" +
+    "<input type='button' id='parts_Del_" +
+    index +
+    "' value='DEL' class='input-group form-control btn btn-danger 'style='text-align: center' onclick='del_newAddRow(this)'/>" +
+    "</td>"
   );
   $("#parts_table").children("tbody").append(tr);
 }
@@ -669,8 +670,8 @@ function sel_MaintainTable(uid, vid) {
         MaintainCycleTable = data;
         console.log(
           "POST_MaintainCycleTable Get " +
-            MaintainCycleTable.length +
-            " data, Status OK"
+          MaintainCycleTable.length +
+          " data, Status OK"
         );
         resolve(); // 確保在成功時調用 resolve
       })

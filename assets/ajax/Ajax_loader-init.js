@@ -11,6 +11,7 @@ function getAjaxData(file_name, function_name, parameter) {
 
   $.ajax({
     type: "POST",
+    // type: "GET",
     contentType: "application/json; charset=utf-8",
     url: file_name + "/" + function_name,
     data: _parameter,
