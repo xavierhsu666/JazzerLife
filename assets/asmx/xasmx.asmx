@@ -16,6 +16,7 @@ public class WebService : System.Web.Services.WebService
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public string meta_sql (string sql_code)
     {
+        SqlConnection.ClearAllPools();
         string sql = @""+sql_code;
         DataTable DT_result = ChangeDataToTable(sql);
 
