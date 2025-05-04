@@ -73,8 +73,8 @@ function getAverageFuelEfficiency(data, dimension) {
     return { key, average };
   });
 
-  averages.sort((a, b) => new Date(b.key) - new Date(a.key)); // 按日期排序
-  return averages.slice(0, 7); // 返回最後七筆資料
+  averages.sort((a, b) => new Date(a.key) - new Date(b.key));// 按日期排序
+  return averages.slice(0, 30); // 返回最後七筆資料
 }
 function ChartMaker() {
   "use strict";
@@ -626,18 +626,40 @@ function ins_Parts() {
   )
     .prop("id")
     .split("_")[2];
+  var date = moment().format("YYYY-MM-DD HH:mm:ss");
   var NewItemMinRow = $($(".newPartsCycleItem")[0]).prop("id").split("_")[2];
   var NewItemCnt = NewItemMaxRow - NewItemMinRow + 1;
   var InsertData = [];
+  var insertValue = '';
+  var insertSQL = 'insert into ' + car_MaintainTable_DBName + ' ([UserID],[PartName],[TimeCycle],[MileageCycle],[CreatedAt],[UpdatedAt]) values';
   for (i = 0; i < NewItemCnt; i++) {
     var item = {
       part: $("#parts_SortItem_" + (parseInt(NewItemMinRow) + i)).val(),
       KM: $("#parts_KM_" + (parseInt(NewItemMinRow) + i)).val(),
-      day: $("#parts_Day_" + (parseInt(NewItemMinRow) + i)).val(),
+      day: $("#parts_Day_" + (parseInt(NewItemMinRow) + i)).val()
     };
     InsertData.push(item);
+    insertValue += uid + ", '" +
+      $("#parts_SortItem_" + (parseInt(NewItemMinRow) + i)).val()
+      + "', '" + $("#parts_Day_" + (parseInt(NewItemMinRow) + i)).val()
+      + "', '" + $("#parts_KM_" + (parseInt(NewItemMinRow) + i)).val()
+      + "','" + date
+      + "','" + date + "'";
   }
-  console.log(InsertData);
+  insertSQL = insertSQL + '(' + insertValue + ')'
+  console.log(insertSQL);
+
+  var _para = { sql_code: insertSQL };
+  getAjaxData_promise("../assets/asmx/xasmx.asmx", "meta_sql", _para)
+    .then(function (data) {
+      console.log(
+        "Insert Maintainness OK"
+      );
+      window.location.reload()
+    })
+    .catch(function (error) {
+      alert("上傳失敗，請洽系統管理員a");
+    });
 }
 function refreshAllData() {
   var uid = sessionStorage.getItem("uid");
