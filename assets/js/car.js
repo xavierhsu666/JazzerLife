@@ -18,6 +18,25 @@ document.querySelectorAll(".dropdown-item").forEach((dropdownToggleEl) => {
 });
 
 // ! -- Function Area ----------------------------------------------------------------------
+function reChart(ele) {
+  console.log($(ele).text())
+  var uid = sessionStorage.getItem('uid');
+  var vid = $("#vehiclesSelect").val().split("_")[0].replace("#", "");
+  var dime = $(ele).text().toLowerCase() + "ly";
+  loader_animate.load_start();
+  console.log('click DASHBOARD');
+
+  sel_FuelConsumption(vid, dime).then(function (data) {
+    // console.log(data)
+    ChartMaker(data);
+    loader_animate.load_end();
+  }).catch(function (error) {
+    alert("上傳失敗，請洽系統管理員");
+    loader_animate.load_end();
+    reload_toDash();
+  });
+  loader_animate.load_end();
+}
 function checkSignInStatus() {
   acc = sessionStorage.getItem("account");
   pwd = sessionStorage.getItem("password");
@@ -76,29 +95,10 @@ function getAverageFuelEfficiency(data, dimension) {
   averages.sort((a, b) => new Date(a.key) - new Date(b.key));// 按日期排序
   return averages.slice(0, 30); // 返回最後七筆資料
 }
-function ChartMaker() {
-  "use strict";
-  var dime = $("#btnText").text().toLowerCase() + "ly";
-  const AvgFE = getAverageFuelEfficiency(OilData, dime);
-  // console.log(AvgFE);
-  var data = AvgFE.map((obj) => obj.average);
-  const formattedDates = AvgFE.map((dateString) => {
-    const date = new Date(dateString.key);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}${month}${day}`;
-  });
-
-  // console.log(formattedDates);
-  // var header = Object.keys(data[0]);
-  var wdict = {
-    index: [1, 2, 3, 4, 5, 6, 7],
-    detail: data,
-    title: ["食", "衣", "住", "行", "育樂", "育樂", "育樂"],
-    time: formattedDates,
-  };
-  feather.replace();
+function ChartMaker(data) {
+  //20250508 -----------------------
+  var data_values = data.map((obj) => obj.FuelEfficiency);
+  var data_index = data.map((obj) => obj.UpdatedAt);
 
   // Graphs
   $("#chart_area").empty();
@@ -111,10 +111,10 @@ function ChartMaker() {
   var myChart = new Chart(canvas, {
     type: "line",
     data: {
-      labels: wdict.time,
+      labels: data_index,
       datasets: [
         {
-          data: wdict.detail,
+          data: data_values,
           lineTension: 0,
           backgroundColor: "transparent",
           borderColor: "#007bff",
@@ -154,42 +154,60 @@ function swipeMainSection(ele) {
     }
   });
   $("#navbar-toggler").click();
-  load_to_page(ele);
+  load_to_page(ActiveSection);
 }
-function load_to_page(ele) {
-  var ActiveSection = String($(ele).children("text").html())
-    .replaceAll(" ", "")
-    .toUpperCase();
-  var uid = sessionStorage.getItem('uid')
+function load_to_page(ActiveSection) {
+  var uid = sessionStorage.getItem('uid');
+  var vid = $("#vehiclesSelect").val().split("_")[0].replace("#", "");
   switch (ActiveSection) {
     case 'HOME':
       console.log('click home')
       break;
     case 'DASHBOARD':
+
+      var dime = $("#btnText").text().toLowerCase() + "ly";
       loader_animate.load_start();
       console.log('click DASHBOARD');
-      var vid = $("#vehiclesSelect").val().split("_")[0].replace("#", "");
-      Promise.all([
-        sel_FuelConsumption(uid, vid),
-        sel_MaintainTable(uid, vid),
-      ]).then(function () {
-        create_MaintainCycleTable();
-        create_FuelRecordTable();
-        console.log("All data refresh OK.");
+
+      sel_FuelConsumption(vid, dime).then(function (data) {
+        // console.log(data)
+        ChartMaker(data);
         loader_animate.load_end();
       }).catch(function (error) {
         alert("上傳失敗，請洽系統管理員");
+        loader_animate.load_end();
         reload_toDash();
       });
+      loader_animate.load_end();
       break;
     case 'OILRECORD':
-      console.log('click home')
+      loader_animate.load_start();
+      console.log('click OILRECORD')
+      sel_FuelConsumption(vid, '123').then(function (data) {
+        // console.log(data)
+        create_FuelRecordTable(data);
+        loader_animate.load_end();
+      }).catch(function (error) {
+        alert("上傳失敗，請洽系統管理員");
+        loader_animate.load_end();
+        reload_toDash();
+      });
       break;
     case 'VEHICLES':
       console.log('click home')
       break;
     case 'PARTSINSPECTTABLE':
       console.log('click home')
+      loader_animate.load_start();
+      sel_MaintainTable(uid, vid).then(function () {
+        create_MaintainCycleTable();
+        console.log("All data refresh OK.");
+        loader_animate.load_end();
+      }).catch(function (error) {
+        alert("上傳失敗，請洽系統管理員");
+        loader_animate.load_end();
+        reload_toDash();
+      });
       break;
   }
 }
@@ -357,34 +375,18 @@ function edit_PartsItem(ele) {
     $("#partsEdit_table").removeClass("d-none");
   }
 }
-function create_FuelRecordTable() {
-  var vc_html = $("#vehiclesSelect");
-  $("#c_table").children().remove();
-  if (vc_html.children().length == 0) {
-    // todo -- 表示目前該使用者無任何車輛
+function create_FuelRecordTable(data) {
+  if (data.length != 0) {
+    DictToJexcel(data, "c_table");
+    OilData = data;
   } else {
-    // todo -- get OIL_CON
-    var vid = vc_html.val().split("_")[0].split("#")[1];
-    var sql_c = "select * from " + car_OilCon_DBName + " with(nolock) ";
-    sql_c += "where [VehicleID] = '" + vid + "' ";
-    var _para = { sql_code: sql_c };
-    getAjaxData_promise("../assets/asmx/xasmx.asmx", "meta_sql", _para).then(
-      function (data) {
-        // console.log(data);
-        if (data.length != 0) {
-          DictToJexcel(data, "c_table");
-          OilData = data;
-          ChartMaker();
-        } else {
-          OilData = "";
-        }
-
-        $("#oilPrice").val("");
-        $("#oilKM_Record").val("");
-        $("#oilLiter_Record").val("");
-      }
-    );
+    OilData = "";
   }
+
+  $("#oilPrice").val("");
+  $("#oilKM_Record").val("");
+  $("#oilLiter_Record").val("");
+
 }
 function create_VehiclesTable() {
   vehicalsTable.forEach(function (i, val) {
@@ -756,16 +758,45 @@ function sel_Vehicles(uid) {
   });
 }
 
-function sel_FuelConsumption(uid, vid) {
+function sel_FuelConsumption(vid, dime) {
+  var sql_c = '';
+  switch (dime) {
+    case 'monthly':
+      sql_c = "select top 13 "
+      sql_c += "cast(datepart(YEAR,UpdatedAt) as varchar) +'M'+ SUBSTRING(convert(varchar(25), UpdatedAt, 120),6,2) as 'UpdatedAt'";
+      sql_c += ", round(AVG(FuelEfficiency),1) as 'FuelEfficiency'";
+      sql_c += ",cast(cast(datepart(YEAR,UpdatedAt) as varchar)+ SUBSTRING(convert(varchar(25), UpdatedAt, 120),6,2) as int) as 'orderNum'";
+      sql_c += " from " + car_OilCon_DBName + " with(nolock) ";
+      sql_c += "where [VehicleID] = '" + vid + "' ";
+      sql_c += " group by cast(datepart(YEAR,UpdatedAt) as varchar) +'M'+ SUBSTRING(convert(varchar(25), UpdatedAt, 120),6,2),cast(cast(datepart(YEAR,UpdatedAt) as varchar)+ SUBSTRING(convert(varchar(25), UpdatedAt, 120),6,2) as int)";
+      sql_c += " order by orderNum desc ";
+      break;
+    case 'weekly':
+      sql_c = "select top 13 "
+      sql_c += "cast(datepart(YEAR,UpdatedAt) as varchar) +'W'+cast(datepart(ISOWW,UpdatedAt) as varchar) as 'UpdatedAt'";
+      sql_c += ", round(AVG(FuelEfficiency),1) as 'FuelEfficiency'";
+      sql_c += ",round(AVG(FuelEfficiency),1) as 'FuelEfficiency',cast(cast(datepart(YEAR,UpdatedAt) as varchar)+cast(datepart(ISOWW,UpdatedAt) as varchar) as int) as 'orderNum'";
+      sql_c += " from " + car_OilCon_DBName + " with(nolock) ";
+      sql_c += "where [VehicleID] = '" + vid + "' ";
+      sql_c += " group by cast(datepart(YEAR,UpdatedAt) as varchar) +'W'+cast(datepart(ISOWW,UpdatedAt) as varchar),cast(cast(datepart(YEAR,UpdatedAt) as varchar)+cast(datepart(ISOWW,UpdatedAt) as varchar) as int)";
+      sql_c += "order by orderNum desc ";
+      break;
+    case 'dayly':
+      sql_c = "select top 13 * from " + car_OilCon_DBName + " with(nolock) ";
+      sql_c += "where [VehicleID] = '" + vid + "' order by UpdatedAt desc";
+      break;
+    default:
+      sql_c = "select top 30 * from " + car_OilCon_DBName + " with(nolock) ";
+      sql_c += "where [VehicleID] = '" + vid + "' order by UpdatedAt desc";
+      break;
+  }
   return new Promise((resolve, reject) => {
-    var sql_c = "select * from " + car_OilCon_DBName + " with(nolock) ";
-    sql_c += "where [VehicleID] = '" + vid + "' ";
     var _para = { sql_code: sql_c };
     getAjaxData_promise("../assets/asmx/xasmx.asmx", "meta_sql", _para)
       .then(function (data) {
         OilData = data;
         console.log("POST_OilData Get " + OilData.length + " data, Status OK");
-        resolve(); // 確保在成功時調用 resolve
+        resolve(data); // 確保在成功時調用 resolve
       })
       .catch(function (error) {
         alert("上傳失敗，請洽系統管理員");
