@@ -154,7 +154,46 @@ function swipeMainSection(ele) {
     }
   });
   $("#navbar-toggler").click();
+  load_to_page(ele);
 }
+function load_to_page(ele) {
+  var ActiveSection = String($(ele).children("text").html())
+    .replaceAll(" ", "")
+    .toUpperCase();
+  var uid = sessionStorage.getItem('uid')
+  switch (ActiveSection) {
+    case 'HOME':
+      console.log('click home')
+      break;
+    case 'DASHBOARD':
+      loader_animate.load_start();
+      console.log('click DASHBOARD');
+      var vid = $("#vehiclesSelect").val().split("_")[0].replace("#", "");
+      Promise.all([
+        sel_FuelConsumption(uid, vid),
+        sel_MaintainTable(uid, vid),
+      ]).then(function () {
+        create_MaintainCycleTable();
+        create_FuelRecordTable();
+        console.log("All data refresh OK.");
+        loader_animate.load_end();
+      }).catch(function (error) {
+        alert("上傳失敗，請洽系統管理員");
+        reload_toDash();
+      });
+      break;
+    case 'OILRECORD':
+      console.log('click home')
+      break;
+    case 'VEHICLES':
+      console.log('click home')
+      break;
+    case 'PARTSINSPECTTABLE':
+      console.log('click home')
+      break;
+  }
+}
+
 function toggle_MainSection(ActiveSection) {
   $("section").each(function (i, val) {
     if ($(val).prop("id").trim().toUpperCase() == ActiveSection.toUpperCase()) {
@@ -667,15 +706,7 @@ function refreshAllData() {
     .then(function () {
       create_VehiclesSelectOption();
       create_VehiclesTable();
-      var vid = $("#vehiclesSelect").val().split("_")[0].replace("#", "");
-      Promise.all([
-        sel_FuelConsumption(uid, vid),
-        sel_MaintainTable(uid, vid),
-      ]).then(function () {
-        create_MaintainCycleTable();
-        create_FuelRecordTable();
-        console.log("All data refresh OK.");
-      });
+
     })
     .catch((error) => {
       console.error("有一個 Promise 失敗了:", error);
